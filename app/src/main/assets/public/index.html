@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1e88e5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Memorial" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="Keep Jewish and Gregorian dates and yahrzeit reminders for loved ones." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>Memorial – Personal Area</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ============ PERSONAL AREA (HOME) ============ -->
+  <div id="view-home" class="view active">
+    <header class="top-bar">
+      <button id="btn-menu" class="icon-btn" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+        </svg>
+      </button>
+      <h1>Personal area</h1>
+      <div class="spacer"></div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="my">My deceased</button>
+      <button class="tab" data-tab="calc">Date calculator</button>
+    </div>
+
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="search-input" class="search-input" placeholder="Search by name, Hebrew name, date…" autocomplete="off" />
+      <button type="button" id="search-clear" class="search-clear" title="Clear" hidden>✕</button>
+    </div>
+
+    <main id="list-container" class="content">
+      <!-- cards injected here -->
+    </main>
+  </div>
+
+  <!-- ============ SIDE MENU ============ -->
+  <div id="side-menu" class="side-menu">
+    <div class="side-menu-header">
+      <h2>Menu</h2>
+      <button id="btn-close-menu" class="icon-btn">✕</button>
+    </div>
+    <nav>
+      <button class="menu-item" data-action="add">
+        <span class="menu-icon">➕</span> Add new person
+      </button>
+      <button class="menu-item" data-action="calc">
+        <span class="menu-icon">📅</span> Gregorian ↔ Jewish calculator
+      </button>
+      <button class="menu-item" data-action="home">
+        <span class="menu-icon">🏠</span> My deceased
+      </button>
+      <button class="menu-item" data-action="share">
+        <span class="menu-icon">📤</span> Share all profiles
+      </button>
+      <button class="menu-item" data-action="download">
+        <span class="menu-icon">⬇️</span> Download profiles
+      </button>
+      <button class="menu-item" data-action="import">
+        <span class="menu-icon">📥</span> Import profiles
+      </button>
+    </nav>
+  </div>
+  <div id="menu-overlay" class="overlay"></div>
+
+  <!-- ============ ADD / EDIT PERSON ============ -->
+  <div id="view-form" class="view">
+    <header class="top-bar">
+      <button id="btn-back-form" class="icon-btn" aria-label="Back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <h1>Information</h1>
+      <button id="btn-change" class="pill-btn">CHANGE</button>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active">Data of the deceased</button>
+    </div>
+
+    <main class="content form-content">
+      <form id="person-form">
+        <input type="hidden" id="edit-id" />
+
+        <label class="field-label">Full name</label>
+        <input type="text" id="name" class="input" placeholder="Type your name here" required />
+
+        <label class="field-label">Hebrew name (optional)</label>
+        <input type="text" id="hebrew-name" class="input" placeholder="Type your name here" />
+
+        <h3 class="section-title">Date of death</h3>
+        <div class="date-row">
+          <label>Gregorian date</label>
+          <input type="date" id="death-greg" class="input date-input" />
+        </div>
+        <label class="checkbox-row sunset-row">
+          <input type="checkbox" id="death-after-sunset" />
+          <span>After sunset (night) — Jewish day already changed</span>
+        </label>
+        <div class="date-row">
+          <label>Jewish date</label>
+          <input type="text" id="death-jewish" class="input date-input" readonly placeholder="Auto-calculated" />
+        </div>
+
+        <h3 class="section-title">Date of birth</h3>
+        <div class="date-row">
+          <label>Gregorian date</label>
+          <input type="date" id="birth-greg" class="input date-input" />
+        </div>
+        <label class="checkbox-row sunset-row">
+          <input type="checkbox" id="birth-after-sunset" />
+          <span>After sunset (night) — Jewish day already changed</span>
+        </label>
+        <div class="date-row">
+          <label>Jewish date</label>
+          <input type="text" id="birth-jewish" class="input date-input" readonly placeholder="Auto-calculated" />
+        </div>
+
+        <h3 class="section-title">Burial place</h3>
+        <div class="date-row">
+          <label>Country</label>
+          <select id="country" class="input">
+            <option value="">Select a country</option>
+            <option>Israel</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>France</option>
+            <option>Canada</option>
+            <option>Australia</option>
+            <option>Germany</option>
+            <option>Russia</option>
+            <option>Ukraine</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="date-row">
+          <label>City</label>
+          <input type="text" id="city" class="input" placeholder="Enter city" />
+        </div>
+        <div class="date-row">
+          <label>Cemetery</label>
+          <input type="text" id="cemetery" class="input" placeholder="Enter the name of the cemetery" />
+        </div>
+        <div class="date-row">
+          <label>Block</label>
+          <input type="text" id="block" class="input" placeholder="Enter the number" />
+        </div>
+        <div class="date-row">
+          <label>Row</label>
+          <input type="text" id="row" class="input" placeholder="Enter the number" />
+        </div>
+        <div class="date-row">
+          <label>Place</label>
+          <input type="text" id="place" class="input" placeholder="Enter the number" />
+        </div>
+
+        <h3 class="section-title">Anniversary reminder</h3>
+        <label class="checkbox-row">
+          <input type="checkbox" id="reminder" checked />
+          <span>Remind me of the yahrzeit / anniversary</span>
+        </label>
+
+        <button type="submit" class="save-btn">SAVE</button>
+      </form>
+    </main>
+  </div>
+
+  <!-- ============ DATE CALCULATOR ============ -->
+  <div id="view-calc" class="view">
+    <header class="top-bar">
+      <button id="btn-back-calc" class="icon-btn" aria-label="Back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <h1>Date calculator</h1>
+      <div class="spacer"></div>
+    </header>
+
+    <main class="content form-content">
+      <div class="calc-card">
+        <h3 class="section-title">Gregorian → Jewish</h3>
+        <div class="date-row">
+          <label>Gregorian date</label>
+          <input type="date" id="calc-greg" class="input date-input" />
+        </div>
+        <div class="result-box" id="calc-jewish-result">
+          Select a date above
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <h3 class="section-title">Jewish → Gregorian</h3>
+        <div class="jewish-inputs">
+          <div>
+            <label>Day</label>
+            <input type="number" id="calc-j-day" class="input" min="1" max="30" value="1" />
+          </div>
+          <div>
+            <label>Month</label>
+            <select id="calc-j-month" class="input">
+              <option value="1">Nisan</option>
+              <option value="2">Iyar</option>
+              <option value="3">Sivan</option>
+              <option value="4">Tammuz</option>
+              <option value="5">Av</option>
+              <option value="6">Elul</option>
+              <option value="7">Tishrei</option>
+              <option value="8">Cheshvan</option>
+              <option value="9">Kislev</option>
+              <option value="10">Tevet</option>
+              <option value="11">Shevat</option>
+              <option value="12">Adar</option>
+              <option value="13">Adar II</option>
+            </select>
+          </div>
+          <div>
+            <label>Year</label>
+            <input type="number" id="calc-j-year" class="input" min="1" value="5785" />
+          </div>
+        </div>
+        <button type="button" id="btn-convert-jewish" class="save-btn small">Convert</button>
+        <div class="result-box" id="calc-greg-result">
+          Enter Jewish date and convert
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ DETAIL / CARD VIEW (optional expand) ============ -->
+  <div id="view-detail" class="view">
+    <header class="top-bar">
+      <button id="btn-back-detail" class="icon-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <h1>Details</h1>
+      <div class="spacer"></div>
+    </header>
+    <main class="content" id="detail-content"></main>
+  </div>
+
+  <script src="hebrew-calendar.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

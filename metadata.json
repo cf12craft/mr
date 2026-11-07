@@ -1,0 +1,8 @@
+{
+  "name": "Memorial Reminder",
+  "description": "Keep biographies, Jewish and Gregorian dates, and yahrzeit reminders for loved ones who have passed away.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
